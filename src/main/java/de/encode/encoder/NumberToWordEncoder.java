@@ -132,7 +132,8 @@ public class NumberToWordEncoder implements Encoder<AlphabetDictionary> {
 	}
 
 	/**
-	 * Encode Partially. Getting possible first words starting from first digit of input numbers.
+	 * Encode Partially. Getting possible first words starting from first digit
+	 * of input numbers.
 	 *
 	 * @param numbers
 	 * @return List
@@ -151,19 +152,18 @@ public class NumberToWordEncoder implements Encoder<AlphabetDictionary> {
 		// get Dictionary root object
 		Node obj = dict.getDictionaryObject();
 		int chInt = numbers.charAt(0) - 48;
-		if (chInt >= 0 && chInt < 10) {
-			// Check for digit and it true, get list of character.
-			for (char ch : getListofChar(chInt)) {
-				// get children of one character of that digit
-				List<Node> childNodes = obj.getChildNodes(ch);
-				if (childNodes != null) {
-					// Add all words of that Children nodes
-					for (Node node : childNodes) {
-						words.addAll(getWords(numbers.substring(1), node));
-					}
+		// get list of characters of first number
+		for (char ch : getListofChar(chInt)) {
+			// get children of one character of that digit
+			List<Node> childNodes = obj.getChildNodes(ch);
+			if (childNodes != null) {
+				// add all words of that Children nodes
+				for (Node node : childNodes) {
+					words.addAll(getWords(numbers.substring(1), node));
 				}
 			}
 		}
+
 		if (words.size() == 0) {
 			words.add(numbers.subSequence(0, 1).toString());
 			return words;
@@ -211,8 +211,6 @@ public class NumberToWordEncoder implements Encoder<AlphabetDictionary> {
 		return finalList;
 	}
 
-
-
 	/**
 	 * should return list of all possible words start from first number up to it
 	 * gets IsWord property true. It gets only possible first words list.
@@ -243,7 +241,6 @@ public class NumberToWordEncoder implements Encoder<AlphabetDictionary> {
 
 		return subWords;
 	}
-
 
 	// Get list of characters from Multimap on Key
 	private List<Character> getListofChar(int key) {
