@@ -44,7 +44,7 @@ public class EncodingClient implements IOConstants {
 			log.info("End Encoding. File written at {}", OUTPUTFILE_PATH);
 
 		} catch (Exception e) {
-			log.info("Dictionay is not loaded");
+			log.info("Dictionay is not loaded. {}", e.getMessage());
 		}
 
 		// runs on object if pending finalization.
