@@ -3,13 +3,13 @@
  */
 package de.encode.dictionary;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,11 +23,11 @@ public class AlphabetDictionary implements Dictionary<AlphabetNode> {
 
 	private static final Logger log = LoggerFactory.getLogger(AlphabetDictionary.class);
 
-	// object of ICharater interface
-	AlphabetNode obj = null;
+	// object of Node interface
+	Node obj = null;
 
 	public AlphabetDictionary() {
-		obj = new AlphabetNode('^');
+		obj = new AlphabetNode('^'); // root node
 	}
 
 	/*
@@ -37,28 +37,26 @@ public class AlphabetDictionary implements Dictionary<AlphabetNode> {
 	 */
 	@Override
 	public void readDictionary(String filePath) throws Exception {
-		BufferedReader br = null;
+		Stream<String> fileStream = null;
 		try {
-			File file = new File(filePath);
-			if (file.exists()) {
-				br = new BufferedReader(new FileReader(file));
-				String word = "";
 				// Read line by line
-				while ((word = br.readLine()) != null) {
-					// check for empty line with space
-					if (word.trim().length() > 0)
+				fileStream = Files.lines(Paths.get(filePath));//getting stream of file
+				fileStream.forEach((word) -> {
+					if (word.trim().length() > 0) {
 						insertNode(obj, word.trim());
-
-				}
-			}
+					}
+				});
+		} catch (IOException exio) {
+			log.info("Can not open dictionary file. Error : {}", exio.toString());
+			throw exio;
 		} catch (Exception ex) {
-			log.error(ex.toString());
+			log.info(ex.toString());
 			throw ex;
 		} finally {
-			try {
-				br.close();
-			} catch (IOException e) {
-				e.printStackTrace();
+			try{
+			fileStream.close();
+			}catch(Exception exIgnore){
+				//ignore
 			}
 		}
 	}
@@ -104,7 +102,7 @@ public class AlphabetDictionary implements Dictionary<AlphabetNode> {
 	 */
 	@Override
 	public AlphabetNode getDictionaryObject() {
-		return obj;
+		return (AlphabetNode) obj;
 	}
 
 	/*
@@ -132,8 +130,12 @@ public class AlphabetDictionary implements Dictionary<AlphabetNode> {
 		return wholeWords;
 	}
 
-	/* (non-Javadoc)
-	 * @see de.encode.dictionary.Dictionary#isWholeWordExist(de.encode.dictionary.Node, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * de.encode.dictionary.Dictionary#isWholeWordExist(de.encode.dictionary.
+	 * Node, java.lang.String)
 	 */
 	@Override
 	public boolean isWholeWordExist(Node wordNode, String word) {

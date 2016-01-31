@@ -25,7 +25,7 @@ public class EncodingClient implements IOConstants {
 	public static void main(String[] args) {
 
 		// Load Dictionary
-		log.info("Load directory");
+		log.info("Load Dictionary");
 		Dictionary dictionary = new AlphabetDictionary();
 		try {
 			dictionary.readDictionary(DICTIONARY_PATH);
@@ -44,7 +44,7 @@ public class EncodingClient implements IOConstants {
 			log.info("End Encoding. File written at {}", OUTPUTFILE_PATH);
 
 		} catch (Exception e) {
-			log.info("Dictionay is not loaded. {}", e.getMessage());
+			log.info("Can not perform encoding..");
 		}
 
 		// runs on object if pending finalization.
