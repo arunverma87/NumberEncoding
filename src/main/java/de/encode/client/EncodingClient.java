@@ -39,9 +39,8 @@ public class EncodingClient implements IOConstants {
 			// Generate encoded file
 			log.info("Start Encoding");
 
-			enc.encodeAndGenerateFile(INPUTFILE_PATH, OUTPUTFILE_PATH);
-
-			log.info("End Encoding. File written at {}", OUTPUTFILE_PATH);
+			if(enc.encodeAndGenerateFile(INPUTFILE_PATH, OUTPUTFILE_PATH))
+				log.info("End Encoding. File written at {}", OUTPUTFILE_PATH);
 
 		} catch (Exception e) {
 			log.info("Can not perform encoding..");

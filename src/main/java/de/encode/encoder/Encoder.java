@@ -31,6 +31,7 @@ public interface Encoder<T> {
 	 *            (String) path of input numbers file.
 	 * @param outputFilePath
 	 *            (String) path of output file.
+	 * @return true,if success, else false
 	 */
-	void encodeAndGenerateFile(String inputFilePath, String outputFilePath);
+	boolean encodeAndGenerateFile(String inputFilePath, String outputFilePath);
 }

@@ -37,10 +37,9 @@ public class AlphabetDictionary implements Dictionary<AlphabetNode> {
 	 */
 	@Override
 	public void readDictionary(String filePath) throws Exception {
-		Stream<String> fileStream = null;
-		try {
+		try(Stream<String> fileStream = Files.lines(Paths.get(filePath));) {
 				// Read line by line
-				fileStream = Files.lines(Paths.get(filePath));//getting stream of file
+				//getting stream of file
 				fileStream.forEach((word) -> {
 					if (word.trim().length() > 0) {
 						insertNode(obj, word.trim());
@@ -52,12 +51,6 @@ public class AlphabetDictionary implements Dictionary<AlphabetNode> {
 		} catch (Exception ex) {
 			log.info(ex.toString());
 			throw ex;
-		} finally {
-			try{
-			fileStream.close();
-			}catch(Exception exIgnore){
-				//ignore
-			}
 		}
 	}
 

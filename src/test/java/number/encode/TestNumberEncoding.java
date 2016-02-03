@@ -80,6 +80,13 @@ public class TestNumberEncoding {
 	}
 
 	@Test
+	public void testTotalOutputGenerate() {
+		String number = "243815356/78989513-371084-5936659-0536281/-/25251";
+		List<String> actualOutput = enc.encodeNumbers(number);
+		Assert.assertEquals(15, actualOutput.size());
+	}
+
+	@Test
 	public void testOutputNotContainsEncodedString() {
 		String wordToTest = "";
 		String number = "";

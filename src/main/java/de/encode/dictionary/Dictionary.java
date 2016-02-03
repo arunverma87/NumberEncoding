@@ -31,9 +31,9 @@ public interface Dictionary<T extends Node> {
 	void insertNode(Node node, String input);
 
 	/**
-	 * get MyDictionary object
+	 * get object of class which implements Node interface
 	 *
-	 * @return MyDictionary object
+	 * @return {@link Node} object
 	 */
 	T getDictionaryObject();
 

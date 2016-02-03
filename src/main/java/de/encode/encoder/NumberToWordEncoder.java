@@ -3,14 +3,14 @@
  */
 package de.encode.encoder;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,8 +34,7 @@ public class NumberToWordEncoder implements Encoder<AlphabetDictionary> {
 	private CustomMultiMap<Integer, Character> pattern;
 	private Dictionary<AlphabetNode> dict;
 
-	BufferedWriter wr = null;
-	BufferedReader br = null;
+	Charset charset = null;
 	private static final Logger log = LoggerFactory.getLogger(NumberToWordEncoder.class);
 
 	/**
@@ -43,6 +42,7 @@ public class NumberToWordEncoder implements Encoder<AlphabetDictionary> {
 	 */
 	public NumberToWordEncoder() {
 		pattern = new CustomArrayListMultiMap<>();
+		charset = Charset.defaultCharset();
 	}
 
 	/*
@@ -62,42 +62,31 @@ public class NumberToWordEncoder implements Encoder<AlphabetDictionary> {
 	 * arun.code.dictionary.DictionaryFunctions)
 	 */
 	@Override
-	public void encodeAndGenerateFile(String inputFilePath, String outputFilePath) {
-		try {
-			wr = new BufferedWriter(new FileWriter(outputFilePath));
-			File file = new File(inputFilePath);
-			if (file.exists()) {
-				br = new BufferedReader(new FileReader(file));
-				// reading line by line
-				String line;
-				while ((line = br.readLine()) != null) {
-					// trim line and check length
-					if (line.trim().length() > 0) {
-						// write in to file.
-						for (String output : encodeNumbers(line.trim())) {
-							try {
-								// Write output in to file with Numbers.
-								wr.write(line + ": " + output);
-								wr.newLine();
-								log.info("{}: {}", line, output);
-							} catch (Exception e) {
-								log.error(e.toString());
-							}
+	public boolean encodeAndGenerateFile(String inputFilePath, String outputFilePath) {
+		try (Stream<String> fileStream = Files.lines(Paths.get(inputFilePath));
+				BufferedWriter bw = Files.newBufferedWriter(Paths.get(outputFilePath), charset)) {
+			fileStream.forEach((line) -> {
+				if (line.trim().length() > 0) {
+					// write in to file.
+					for (String output : encodeNumbers(line.trim())) {
+						// Write output in to file with Numbers.
+						try {
+							bw.write(line + ": " + output);
+							bw.newLine();
+							log.info("{}: {}", line, output);
+						} catch (Exception e) {
+							log.info("line: {}, output: {}. Error: {}", line, output, e.toString());
 						}
 					}
 				}
-			} else
-				throw new IOException("File not found on path " + inputFilePath);
+			});
+			return true;
 		} catch (IOException exio) {
-			log.error(exio.toString());
-		} finally {
-			try {
-				if (br != null)
-					br.close();
-				wr.close();
-			} catch (IOException e) {
-				// ignore
-			}
+			log.info("Error occured while streaming inputfile and writing ouput file. Error : {}", exio.toString());
+			return false;
+		} catch (Exception ex) {
+			log.info("Error occured while encoding inputfile. Error: {}", ex.toString());
+			return false;
 		}
 	}
 
