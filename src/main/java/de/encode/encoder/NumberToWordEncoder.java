@@ -65,19 +65,20 @@ public class NumberToWordEncoder implements Encoder<AlphabetDictionary> {
 	public boolean encodeAndGenerateFile(String inputFilePath, String outputFilePath) {
 		try (Stream<String> fileStream = Files.lines(Paths.get(inputFilePath));
 				BufferedWriter bw = Files.newBufferedWriter(Paths.get(outputFilePath), charset)) {
-			fileStream.forEach((line) -> {
+			fileStream.forEach(line -> {
 				if (line.trim().length() > 0) {
 					// write in to file.
-					for (String output : encodeNumbers(line.trim())) {
+					encodeNumbers(line.trim()).stream().forEach((output) -> {
 						// Write output in to file with Numbers.
 						try {
 							bw.write(line + ": " + output);
 							bw.newLine();
 							log.info("{}: {}", line, output);
+							Thread.sleep(1000);
 						} catch (Exception e) {
-							log.info("line: {}, output: {}. Error: {}", line, output, e.toString());
+							log.info("Number: {}, output: {}. Error: {}", line, output, e.toString());
 						}
-					}
+					});
 				}
 			});
 			return true;
